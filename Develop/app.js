@@ -7,8 +7,6 @@ const app = express();
 
 const PORT = process.env.PORT || 8008;
 
-//start notes data
-var dbNotes = [];
 
 // Sets up the Express app to handle data parsing
 app.use(express.urlencoded({ extended: true }));
