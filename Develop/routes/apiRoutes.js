@@ -1,12 +1,7 @@
 const fs = require('fs');
-var uniqid = require('uniqid');
+const uniqid = require('uniqid');
 
 module.exports = function(app) {
-
-//should have a db.json file on the backend that will be used to store and retrieve notes using the fs module.
-
-
-
 
     //GET /api/notes 
     app.get("/api/notes", function(req, res) {
@@ -14,19 +9,23 @@ module.exports = function(app) {
         fs.readFile("db/db.json", (err, data) => {
             if (err) throw err;
             var notes = JSON.parse(data);
-        
-        res.json(notes);
-    })
+            console.log("THIS IS DATA", notes)
+            res.json(notes);
+            
+        })
 
-    //POST /api/notes 
+    })
+    // POST /api/notes 
     app.post("/api/notes", function(req, res) {
         // Should receive a new note to save on the request body,
+        var id = uniqid()
         var addNote = {
             id: id,
             title: req.body.title,
             text: req.body.text
-        };
-        // then return the new note to the client
+        }
+        
+       // then return the new note to the client
         fs.readFile("db/db.json", (err, data) => {
             if (err) throw err;
             var notes = JSON.parse(data);
@@ -34,28 +33,35 @@ module.exports = function(app) {
             //write files
             fs.writeFile("db/db.json", JSON.stringify(notes), (err) => {
                 if (err) throw err;
-                console.log("data added");
+                console.log("added");
             })
         });
     })
 
-  });
-//DELETE /api/notes/:id - Should receive a query parameter containing the id of a note to  delete. 
+  
+
+//  //DELETE /api/notes/:id - Should receive a query parameter containing the id of a note to  delete. 
     app.delete("/api/notes/:id", function(req, res) {
+        var notes = req.body;
+        var id = parseInt(req.params.id);
         
-    })
-//This means you'll need to find a way to give each note a unique id when it's saved. 
-//In order to delete a note, you'll need to read all notes from the db.json file, 
-//remove the note with the given id property, and then rewrite the notes to the db.json
-
-
-//db.json file on the backend that will store and retrieve notes using fs module
-function addFileToDB() {
-    fs.writeFile("db/db.json", JSON.stringify(notes,'\t'), err => {
-        if (err) throw err;
-        return true;
-    });
-  }
-
+        Notes.removeNotes(id, (err,notes) => {
+            if (err) throw err;
+            res.json(notes);
+        })
+        
+        // for (var i=0; i < notes.length; i++) {
+        //     if (deleteID === notes[i].id) {
+        //         notes.splice(i,1);
+        //         console.log("WHERE IS THIS", i,1)
+        //         var noteJSON = JSON.stringify(notes);
+        //         fs.writeFile("db/db.json", noteJSON), (err) => {
+        //             if (err) throw err;
+        //             console.log("data added");
+        //         };
+        //     };
+       
+        
+      });
 
 };
