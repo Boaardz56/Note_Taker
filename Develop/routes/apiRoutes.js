@@ -42,26 +42,11 @@ module.exports = function(app) {
 
 //  //DELETE /api/notes/:id - Should receive a query parameter containing the id of a note to  delete. 
     app.delete("/api/notes/:id", function(req, res) {
-        var notes = req.body;
-        var id = parseInt(req.params.id);
-        
-        Notes.removeNotes(id, (err,notes) => {
-            if (err) throw err;
-            res.json(notes);
-        })
-        
-        // for (var i=0; i < notes.length; i++) {
-        //     if (deleteID === notes[i].id) {
-        //         notes.splice(i,1);
-        //         console.log("WHERE IS THIS", i,1)
-        //         var noteJSON = JSON.stringify(notes);
-        //         fs.writeFile("db/db.json", noteJSON), (err) => {
-        //             if (err) throw err;
-        //             console.log("data added");
-        //         };
-        //     };
-       
-        
+        var notes =JSON.parse(fs.readFileSync('./db/db.json', 'utf-8'));
+        var newNotes = notes.filter(note => note.id !== req.params.id);
+        fs.writeFileSync('./db/db.json', JSON.stringify(newNotes));
+        res.json(true);
       });
+      
 
 };
